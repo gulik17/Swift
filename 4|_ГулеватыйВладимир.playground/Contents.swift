@@ -1,12 +1,22 @@
 import UIKit
 
-//1. Описать класс Car c общими свойствами автомобилей и пустым методом действия по аналогии с прошлым заданием.
-//2. Описать пару его наследников trunkCar и sportСar. Подумать, какими отличительными свойствами обладают эти автомобили. Описать в каждом наследнике специфичные для него свойства.
-//3. Взять из прошлого урока enum с действиями над автомобилем. Подумать, какие особенные действия имеет trunkCar, а какие – sportCar. Добавить эти действия в перечисление.
-//4. В каждом подклассе переопределить метод действия с автомобилем в соответствии с его классом.
-//5. Создать несколько объектов каждого класса. Применить к ним различные действия.
-//6. Вывести значения свойств экземпляров в консоль.
+/*
+ 1. Создать протокол «Car» и описать свойства, общие для автомобилей, а также метод действия.
+ 2. Создать расширения для протокола «Car» и реализовать в них методы конкретных действий с автомобилем: открыть/закрыть окно, запустить/заглушить двигатель и т.д. (по одному методу на действие, реализовывать следует только те действия, реализация которых общая для всех автомобилей).
+ 3. Создать два класса, имплементирующих протокол «Car» - trunkCar и sportСar. Описать в них свойства, отличающиеся для спортивного автомобиля и цистерны.
+ 4. Для каждого класса написать расширение, имплементирующее протокол CustomStringConvertible.
+ 5. Создать несколько объектов каждого класса. Применить к ним различные действия.
+ 6. Вывести сами объекты в консоль. */
 
+protocol CarProtocol {
+    var brand: String {get}
+    var color: String {get}
+    var issue: UInt {get}
+
+    var doorState: String {get}
+
+    func action() -> String
+}
 
 // класс машины
 class Car {
@@ -16,6 +26,8 @@ class Car {
         case windowsOpen
         case windowsClose
         case cargoLoad(Double)
+        case roofOpen
+        case roofClose
     }
 
     let brand: String
@@ -38,27 +50,10 @@ class Car {
         self.windows = true
     }
 
-    func action(_ action: Actions) { // функция будет переопределена, так что реализовавать ее не будем
-        switch action {
-        case .engineOn:
-            print("Завели двигатель")
-        case .engineOff:
-            print("Заглушили двигатель")
-        case .windowsOpen:
-            print("Открыли окна")
-        case .windowsClose:
-            print("Закрыли окна")
-        case .cargoLoad(let load):
-            print("Загрузили/выгрузили \(load)")
-        }
-    }
+    func action(_ action: Actions) {} // функция будет переопределена, так что реализовавать ее не будем
 }
 
 class Passenger: Car {
-    enum roofAction {
-        case roofOpen,
-            roofClose
-    }
     var roof: Bool
 
     override init(brand: String, color: String, issue: UInt, trunkSize: [Double]) {
@@ -66,25 +61,6 @@ class Passenger: Car {
         super.init(brand: brand, color: color, issue: issue, trunkSize: trunkSize)
         self.engine = true
         self.windows = true
-    }
-    
-    func roofAction(_ action: roofAction) {
-        switch action {
-        case .roofOpen:
-            if !roof {
-                roof = true
-                print("крышу подняли \(brand)")
-            } else {
-                print("крыша уже поднята")
-            }
-        case .roofClose:
-            if roof {
-                roof = false
-                print("крышу закрыли \(brand)")
-            } else {
-                print("крыша уже закрыта")
-            }
-        }
     }
     
     override func description() {
@@ -121,6 +97,21 @@ class Passenger: Car {
             } else {
                 print("окна уже закрыты")
             }
+        case .roofOpen:
+            if !roof {
+                roof = true
+                print("крышу подняли \(brand)")
+            } else {
+                print("крыша уже поднята")
+            }
+        case .roofClose:
+            if roof {
+                roof = false
+                print("крышу закрыли \(brand)")
+            } else {
+                print("крыша уже закрыта")
+            }
+        }
         case .cargoLoad(let load):
             let sizeLoad = trunkSize[0] + load
             switch sizeLoad {
